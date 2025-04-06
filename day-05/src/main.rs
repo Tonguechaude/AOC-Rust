@@ -21,14 +21,19 @@ impl Kid {
         // 🎁 Transform the CSV row into a Kid struct for Santa's list!
         // 🎅 Expected CSV: "Name,GoodDeeds,BadDeeds"
         //    Example: "Alice,3,1" -> name: "Alice", good_deeds: 3, bad_deeds: 1
-
         // 🎁 Your code here! 🎁
-
         let mut éléments = csv_row.split(',');
-        let name = éléments.next().unwrap().to_string();
-        let good_deeds = éléments.next().unwrap().parse().unwrap();
-        let bad_deeds = éléments.next().unwrap().parse().unwrap();
-
+        let name = éléments.next().ok_or("Missing name")?.to_string();
+        let good_deeds = éléments
+            .next()
+            .ok_or("Missing good deeds")?
+            .parse::<u32>()
+            .map_err(|_| "good_deeds Invalid")?;
+        let bad_deeds = éléments
+            .next()
+            .ok_or("Missing bad_deeds")?
+            .parse::<u32>()
+            .map_err(|_| "bad_deeds Invalid")?;
         Ok(Self::new(name, good_deeds, bad_deeds))
     }
 
@@ -55,3 +60,14 @@ impl Kid {
         ratio >= 0.75
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+
+//     #[test]
+//     fn test_csv_parse() {
+//         let csv_row = "Alice,3";
+//         let kid = Kid::parse_row(csv_row).unwrap();
+//     }
+// }
